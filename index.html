@@ -620,10 +620,29 @@
                 button.textContent = 'Processing...';
                 button.disabled = true;
                 
-                setTimeout(() => {
-                    successMessage.style.display = 'block';
-                    this.style.display = 'none';
-                }, 1200);
+                // Post email to remote collection service
+                fetch('https://n8n.siliconclouds.com.au/webhook/8f3ff71d-5ad9-4786-bd09-4971f668d66f', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        successMessage.style.display = 'block';
+                        this.style.display = 'none';
+                    } else {
+                        button.textContent = 'Try Again';
+                        button.disabled = false;
+                        alert('Submission failed. Please try again.');
+                    }
+                })
+                .catch(() => {
+                    button.textContent = 'Try Again';
+                    button.disabled = false;
+                    alert('Submission failed. Please try again.');
+                });
             }
         });
 
